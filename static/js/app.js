@@ -3,16 +3,16 @@ function buildMetadata(sample) {
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
     // get the metadata field
-
+    const metadata = data.metadata;
 
     // Filter the metadata for the object with the desired sample number
-
+    const sampleMetadata = metadata.filter(x => x.id == sample)[0];
 
     // Use d3 to select the panel with id of `#sample-metadata`
-
+    let panel = d3.select("#sample-metadata");
 
     // Use `.html("") to clear any existing metadata
-
+    panel.html("");
 
     // Inside a loop, you will need to use d3 to append new
     // tags for each key-value in the filtered metadata.
@@ -25,28 +25,64 @@ function buildCharts(sample) {
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
     // Get the samples field
-
+    const samples = data.samples;
 
     // Filter the samples for the object with the desired sample number
-
+    const selectedSample = samples.filter(s => s.id === sample)[0];
 
     // Get the otu_ids, otu_labels, and sample_values
-
+    const otu_ids = selectedSample.otu_ids;
+    const otu_lables = selectedSample.otu_labels;
+    const sample_values = selectedSample.sample_values;
 
     // Build a Bubble Chart
-
+    let bubbleTitle = `Bacteria Cultures per Sample`;
+    let bubbleData = [{
+      x: otu_ids,
+      y: sample_values,
+      text: otu_lables,
+      mode: 'markers',
+      marker: {
+        size: sample_values,
+        color: otu_ids,
+      }
+    }];
+    
+    let bubbleLayout = {
+      title: bubbleTitle,
+      xaxias: { title: "OTU ID"},
+      yaxis: { title: "Number of Bacteria"}
+    };
 
     // Render the Bubble Chart
-
+    Plotly.newPlot("Bar", bubbleData, bubbleLayout);
 
     // For the Bar Chart, map the otu_ids to a list of strings for your yticks
 
 
     // Build a Bar Chart
     // Don't forget to slice and reverse the input data appropriately
-
+    let barTitle = `Top 10 Bacteria Cultures Found`;
+    
+    
+    let top10Values = ;
+    let top10UtdIds = ;
+    let top10Labels = ; 
+    
+    let barData = [{
+      type: 'bar',
+      x: top10Values,
+      y: top10OtuIds,
+      text: top10Labels,
+      orientation: 'h'
+    }];
+    let barLayout = {
+      title: barTitle,
+      xaxis: { title: "Number of Bacteria"},
+    };
 
     // Render the Bar Chart
+    Plotly.newPlot("Bar", barData, barLayout);
 
   });
 }
@@ -56,10 +92,10 @@ function init() {
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
     // Get the names field
-
+    const names = data.names;
 
     // Use d3 to select the dropdown with id of `#selDataset`
-
+    let dropdownMenu = d3.select("#selDataset")
 
     // Use the list of sample names to populate the select options
     // Hint: Inside a loop, you will need to use d3 to append a new
@@ -70,14 +106,14 @@ function init() {
 
 
     // Build charts and metadata panel with the first sample
-
+    
   });
 }
 
 // Function for event listener
 function optionChanged(newSample) {
   // Build charts and metadata panel each time a new sample is selected
-
+  Plotly.restyle("bar", "bubble", [newSample]);
 }
 
 // Initialize the dashboard
