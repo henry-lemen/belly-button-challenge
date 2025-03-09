@@ -16,7 +16,7 @@ function buildMetadata(sample) {
 
     // Inside a loop, you will need to use d3 to append new
     // tags for each key-value in the filtered metadata.
-
+    Object.entries(sampleMetadata).forEach
   });
 }
 
@@ -55,7 +55,7 @@ function buildCharts(sample) {
     };
 
     // Render the Bubble Chart
-    Plotly.newPlot("Bar", bubbleData, bubbleLayout);
+    Plotly.newPlot("bubble", bubbleData, bubbleLayout);
 
     // For the Bar Chart, map the otu_ids to a list of strings for your yticks
 
@@ -65,9 +65,9 @@ function buildCharts(sample) {
     let barTitle = `Top 10 Bacteria Cultures Found`;
     
     
-    let top10Values = ;
-    let top10UtdIds = ;
-    let top10Labels = ; 
+    let top10Values = sample_values.slice(0,10).reverse;
+    let top10OtuIds = otu_ids.slice(0,10).reverse;
+    let top10Labels = otu_labels.slice(0,10).reverse; 
     
     let barData = [{
       type: 'bar',
@@ -82,7 +82,7 @@ function buildCharts(sample) {
     };
 
     // Render the Bar Chart
-    Plotly.newPlot("Bar", barData, barLayout);
+    Plotly.newPlot("bar", barData, barLayout);
 
   });
 }
@@ -103,7 +103,7 @@ function init() {
 
 
     // Get the first sample from the list
-
+    const firstSample = names[0];
 
     // Build charts and metadata panel with the first sample
     
