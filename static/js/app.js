@@ -16,7 +16,9 @@ function buildMetadata(sample) {
 
     // Inside a loop, you will need to use d3 to append new
     // tags for each key-value in the filtered metadata.
-    Object.entries(sampleMetadata).forEach
+    Object.entries(sampleMetadata).forEach(([key, value]) => {
+      panel.append("p").text(`${key}:${value}`);
+    });
   });
 }
 
@@ -32,7 +34,7 @@ function buildCharts(sample) {
 
     // Get the otu_ids, otu_labels, and sample_values
     const otu_ids = selectedSample.otu_ids;
-    const otu_lables = selectedSample.otu_labels;
+    const otu_labels = selectedSample.otu_labels;
     const sample_values = selectedSample.sample_values;
 
     // Build a Bubble Chart
@@ -40,7 +42,7 @@ function buildCharts(sample) {
     let bubbleData = [{
       x: otu_ids,
       y: sample_values,
-      text: otu_lables,
+      text: otu_labels,
       mode: 'markers',
       marker: {
         size: sample_values,
@@ -50,29 +52,29 @@ function buildCharts(sample) {
     
     let bubbleLayout = {
       title: bubbleTitle,
-      xaxias: { title: "OTU ID"},
+      xaxis: { title: "OTU ID"},
       yaxis: { title: "Number of Bacteria"}
     };
 
     // Render the Bubble Chart
     Plotly.newPlot("bubble", bubbleData, bubbleLayout);
 
-    // For the Bar Chart, map the otu_ids to a list of strings for your yticks
-
-
     // Build a Bar Chart
     // Don't forget to slice and reverse the input data appropriately
     let barTitle = `Top 10 Bacteria Cultures Found`;
     
     
-    let top10Values = sample_values.slice(0,10).reverse;
-    let top10OtuIds = otu_ids.slice(0,10).reverse;
-    let top10Labels = otu_labels.slice(0,10).reverse; 
+    let top10Values = sample_values.slice(0,10).reverse();
+    let top10OtuIds = otu_ids.slice(0,10).reverse();
+    let top10Labels = otu_labels.slice(0,10).reverse(); 
+
+    // For the Bar Chart, map the otu_ids to a list of strings for your yticks
+    let top10OtuIdsFormatted = top10OtuIds.map(id => `OTU ${id}`);
     
     let barData = [{
       type: 'bar',
       x: top10Values,
-      y: top10OtuIds,
+      y: top10OtuIdsFormatted,
       text: top10Labels,
       orientation: 'h'
     }];
@@ -95,25 +97,30 @@ function init() {
     const names = data.names;
 
     // Use d3 to select the dropdown with id of `#selDataset`
-    let dropdownMenu = d3.select("#selDataset")
+    let dropdownMenu = d3.select("#selDataset");
 
     // Use the list of sample names to populate the select options
     // Hint: Inside a loop, you will need to use d3 to append a new
     // option for each sample name.
-
+    names.forEach((sample) => {
+      dropdownMenu.append("option").text(sample).property("value", sample);
+    });
 
     // Get the first sample from the list
     const firstSample = names[0];
 
     // Build charts and metadata panel with the first sample
-    
+    buildCharts(firstSample);
+    buildMetadata(firstSample);
+
   });
 }
 
 // Function for event listener
 function optionChanged(newSample) {
   // Build charts and metadata panel each time a new sample is selected
-  Plotly.restyle("bar", "bubble", [newSample]);
+  buildCharts(newSample);
+  buildMetadata(newSample);
 }
 
 // Initialize the dashboard
